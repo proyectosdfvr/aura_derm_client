@@ -77,7 +77,7 @@ const generateWhatsAppLink = (items: CartItem[], total: number, customerData?: {
     message += `Ciudad: ${customerData.city}\n\n`;
   }
 
-  message += `📦 El costo de envío se confirmará según tu ciudad.\n\n`;
+  message += `📦 *Costo de envío:* Se confirma según tu ubicación ($10.000 - $50.000 aprox), este valor SE SUMA al total.\n\n`;
   message += `¡Gracias por tu compra! 💖`;
 
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -160,14 +160,14 @@ function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm text-[#C74375] text-xs font-bold mb-8 tracking-widest uppercase border border-pink-100">
-              <i className="fas fa-sparkles text-[#FF6B9D]"></i> Nueva Fórmula 2025
+              <i className="fas fa-star text-[#FF6B9D]"></i> Selección Premium
             </div>
             <h1 className="text-5xl sm:text-7xl font-bold text-gray-900 mb-6 font-serif leading-[1.1]">
               Tu Piel Cuenta <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] to-[#ff8da1]">Una Historia</span>
             </h1>
             <p className="text-lg text-gray-600 mb-10 max-w-lg mx-auto lg:mx-0 font-light leading-relaxed">
-              Únete a nuestra comunidad de mujeres que eligen cuidarse con amor. Productos dermatológicos que realzan tu belleza natural sin filtros.
+              Únete a nuestra comunidad de mujeres que eligen lo mejor. Seleccionamos cuidadosamente productos virales y efectivos para resaltar tu belleza.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <a href="#products" className="bg-[#FF6B9D] text-white px-10 py-4 rounded-full font-semibold hover:bg-[#C74375] transition shadow-xl shadow-pink-200/50 transform hover:-translate-y-1">
@@ -197,8 +197,8 @@ function Hero() {
                   <i className="fas fa-leaf text-xl"></i>
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800">100% Natural</p>
-                  <p className="text-xs text-gray-500">Ingredientes puros</p>
+                  <p className="font-bold text-gray-800">Envíos Seguros</p>
+                  <p className="text-xs text-gray-500">A todo el país</p>
                 </div>
               </div>
             </div>
@@ -1099,6 +1099,97 @@ function CartSidebar({
   );
 }
 
+// --- Suggestion Feature ---
+
+function SuggestionHeader({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="bg-gray-50 border-y border-gray-100 py-12">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">¿No encuentras tu producto favorito?</h3>
+        <p className="text-gray-500 mb-6">Cuéntanos qué marca o producto te gustaría ver en AuraDerm. ¡Nosotras lo buscamos por ti!</p>
+        <button
+          onClick={onOpen}
+          className="bg-gray-900 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-800 transition hover:scale-105 shadow-lg flex items-center gap-2 mx-auto"
+        >
+          <i className="fas fa-lightbulb text-yellow-300"></i> Sugerir Producto
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SuggestionModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+  const [formData, setFormData] = useState({ product: '', description: '', contact: '' });
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+    try {
+      await addDoc(collection(db, "sugerencias"), {
+        ...formData,
+        fecha: serverTimestamp(),
+        estado: 'pendiente'
+      });
+      setStatus('success');
+      setTimeout(() => { onClose(); setStatus('idle'); setFormData({ product: '', description: '', contact: '' }); }, 2500);
+    } catch (error) {
+      console.error("Error sending suggestion", error);
+      setStatus('idle');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+      <div className="bg-white rounded-[2rem] w-full max-w-md overflow-hidden shadow-2xl animate-fade-in-up relative" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition">
+          <i className="fas fa-times text-gray-600"></i>
+        </button>
+
+        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 text-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+          <i className="fas fa-magic text-4xl mb-3 text-yellow-300 animate-pulse"></i>
+          <h3 className="text-2xl font-serif font-bold">Hagamos Magia</h3>
+          <p className="text-indigo-100 text-sm mt-1">Ayúdanos a mejorar nuestro catálogo.</p>
+        </div>
+
+        {status === 'success' ? (
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="fas fa-check text-2xl text-green-600"></i>
+            </div>
+            <h4 className="text-xl font-bold text-gray-900 mb-2">¡Recibido!</h4>
+            <p className="text-gray-500 text-sm">Gracias por tu sugerencia. La revisaremos pronto.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-8 space-y-5">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase mb-1.5 ml-1">Nombre del Producto / Marca</label>
+              <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition text-gray-800 font-medium placeholder-gray-300"
+                value={formData.product} onChange={e => setFormData({ ...formData, product: e.target.value })} placeholder="Ej: The Ordinary Niacinamide..." />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase mb-1.5 ml-1">¿Algún detalle extra?</label>
+              <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition text-gray-800 placeholder-gray-300" rows={2}
+                value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} placeholder="Es para piel grasa, lo vi en TikTok..." />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase mb-1.5 ml-1">Tu Contacto (Opcional)</label>
+              <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition text-gray-800 placeholder-gray-300"
+                value={formData.contact} onChange={e => setFormData({ ...formData, contact: e.target.value })} placeholder="Email o WhatsApp para avisarte" />
+            </div>
+            <button type="submit" disabled={status === 'submitting'} className="w-full bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition shadow-lg transform active:scale-95 flex items-center justify-center gap-2">
+              {status === 'submitting' ? <><i className="fas fa-spinner fa-spin"></i> Enviando...</> : 'Enviar Sugerencia'}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // --- Checkout Modal ---
 
 function CheckoutModal({ isOpen, onClose, total, onSubmit }: { isOpen: boolean, onClose: () => void, total: number, onSubmit: (data: any) => void }) {
@@ -1151,7 +1242,10 @@ function CheckoutModal({ isOpen, onClose, total, onSubmit }: { isOpen: boolean, 
               onChange={e => setFormData({ ...formData, address: e.target.value })}
               placeholder="Calle 123 # 45-67, Barrio, Ciudad"
             />
-            <p className="text-xs text-gray-500 mt-1">Necesaria para calcular el costo de envío</p>
+            <p className="text-xs text-red-500 font-medium mt-1 bg-red-50 p-2 rounded-lg border border-red-100">
+              <i className="fas fa-exclamation-circle mr-1"></i>
+              Nota: El costo de envío ($10.000 - $50.000) se suma al total y depende de tu ciudad.
+            </p>
           </div>
 
           <div className="pt-4">
@@ -1428,6 +1522,7 @@ function App() {
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
@@ -1620,6 +1715,7 @@ function App() {
         addToCart={addToCart}
         onProductClick={setSelectedProduct}
       />
+      <SuggestionHeader onOpen={() => setIsSuggestionOpen(true)} />
       <Benefits />
       <CommunitySection articles={articles} loading={loadingArticles} testimonials={testimonials} />
 
@@ -1658,6 +1754,8 @@ function App() {
       />
 
       <Chatbot products={products} cartItems={cart} />
+
+      <SuggestionModal isOpen={isSuggestionOpen} onClose={() => setIsSuggestionOpen(false)} />
 
       <Footer logoUrl={logoUrl} />
     </div>
