@@ -167,7 +167,7 @@ function Hero() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] to-[#ff8da1]">Una Historia</span>
             </h1>
             <p className="text-lg text-gray-600 mb-10 max-w-lg mx-auto lg:mx-0 font-light leading-relaxed">
-              Únete a nuestra comunidad de mujeres que eligen lo mejor. Seleccionamos cuidadosamente productos virales y efectivos para resaltar tu belleza.
+              Especialistas en las 4 necesidades clave de tu piel: <strong>Anti-manchas, Hidratación, Protección Solar y Rejuvenecimiento</strong>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <a href="#products" className="bg-[#FF6B9D] text-white px-10 py-4 rounded-full font-semibold hover:bg-[#C74375] transition shadow-xl shadow-pink-200/50 transform hover:-translate-y-1">
@@ -210,28 +210,28 @@ function Hero() {
 }
 
 function Benefits() {
-  const benefits = [
-    { icon: "fa-shipping-fast", title: "Envío Rápido", desc: "A toda Colombia en 2-4 días." },
-    { icon: "fa-hand-holding-heart", title: "Pago Seguro", desc: "Paga solo al recibir tu pedido." },
-    { icon: "fa-comments", title: "Asesoría Real", desc: "Expertas disponibles en WhatsApp." },
-    { icon: "fa-gem", title: "Calidad Premium", desc: "Fórmulas probadas y efectivas." }
+  const solutions = [
+    { icon: "fa-sun", title: "Anti-Manchas", desc: "Sérums Vitamina C para unificar e iluminar tu tono." },
+    { icon: "fa-tint", title: "Hidratación", desc: "Ácido Hialurónico para una piel jugosa y suave." },
+    { icon: "fa-shield-alt", title: "Protección Solar", desc: "Bloqueadores con color (SPF 50+) de uso diario." },
+    { icon: "fa-hourglass-half", title: "Anti-Edad", desc: "Colágeno y tratamientos premium para rejuvenecer." }
   ];
 
   return (
     <section id="benefits" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-serif font-bold text-gray-900">¿Por qué elegir AuraDerm?</h2>
-          <p className="text-gray-500 mt-2">Más que productos, te ofrecemos una experiencia.</p>
+          <h2 className="text-3xl font-serif font-bold text-gray-900">Nuestras 4 Soluciones Estrella</h2>
+          <p className="text-gray-500 mt-2">Una rutina experta diseñada para las necesidades reales de tu piel.</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {benefits.map((b, idx) => (
+          {solutions.map((s, idx) => (
             <div key={idx} className="text-center p-8 rounded-3xl bg-[#fff9fb] hover:bg-white hover:shadow-xl transition duration-500 border border-transparent hover:border-pink-100 group">
               <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-6 text-[#FF6B9D] text-3xl shadow-sm group-hover:scale-110 transition-transform duration-300">
-                <i className={`fas ${b.icon}`}></i>
+                <i className={`fas ${s.icon}`}></i>
               </div>
-              <h3 className="font-bold text-gray-900 mb-3 text-lg">{b.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{b.desc}</p>
+              <h3 className="font-bold text-gray-900 mb-3 text-lg">{s.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -959,7 +959,7 @@ function Footer({ logoUrl }: { logoUrl: string | null }) {
               </li>
               <li className="flex items-center gap-3">
                 <i className="fas fa-envelope text-[#FF6B9D]"></i>
-                <span>hola@auraderm.com</span>
+                <span>proyectosdfvr@gmail.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <i className="fas fa-clock text-[#FF6B9D]"></i>
