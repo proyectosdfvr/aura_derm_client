@@ -1652,7 +1652,7 @@ function App() {
 
   // Persistence
   useEffect(() => {
-    const saved = localStorage.getItem('auraderm-cart');
+    const saved = localStorage.getItem('auraderma-cart');
     if (saved) {
       try {
         setCart(JSON.parse(saved));
@@ -1663,7 +1663,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('auraderm-cart', JSON.stringify(cart));
+    localStorage.setItem('auraderma-cart', JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product: Product) => {

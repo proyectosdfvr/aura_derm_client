@@ -130,7 +130,7 @@ Propietario - Todos los derechos reservados © 2025 AuraDerma
 
 Para soporte técnico o consultas:
 - WhatsApp: +57 301 772 7626
-- Email: soporte@auraderm.com
+- Email: soporte@auraderma.com
 
 ---
 
