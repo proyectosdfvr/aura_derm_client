@@ -57,7 +57,7 @@ const formatPrice = (price: number | string) => {
 };
 
 const generateWhatsAppLink = (items: CartItem[], total: number, customerData?: { name: string, city: string }) => {
-  let message = `🌸 *RECIBO DE PEDIDO - AuraDerm* 🌸\n\n`;
+  let message = `🌸 *RECIBO DE PEDIDO - AuraDerma* 🌸\n\n`;
   message += `📋 *DETALLE DEL PEDIDO*\n\n`;
 
   items.forEach(item => {
@@ -114,7 +114,7 @@ function Header({ cartCount, onOpenCart, logoUrl }: { cartCount: number, onOpenC
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-3">
             {logoUrl ? (
-              <img src={logoUrl} alt="AuraDerm Logo" className="h-12 w-12 rounded-full object-cover border border-pink-100 shadow-sm" />
+              <img src={logoUrl} alt="AuraDerma Logo" className="h-12 w-12 rounded-full object-cover border border-pink-100 shadow-sm" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-pink-400 flex items-center justify-center text-white animate-pulse">
                 <i className="fas fa-leaf text-sm"></i>
@@ -584,7 +584,7 @@ interface Testimonial {
 function ProductImageCarousel({ images }: { images: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const imagesToShow = images && images.length > 0 ? images : ['https://via.placeholder.com/400x400?text=AuraDerm'];
+  const imagesToShow = images && images.length > 0 ? images : ['https://via.placeholder.com/400x400?text=AuraDerma'];
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -795,7 +795,7 @@ function CommunitySection({ articles, loading, testimonials }: { articles: Artic
           <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
             <div>
               <span className="text-[#FF6B9D] font-bold text-xs uppercase tracking-widest">Blog & Tips</span>
-              <h2 className="text-4xl font-serif font-bold text-gray-900 mt-2">Comunidad AuraDerm</h2>
+              <h2 className="text-4xl font-serif font-bold text-gray-900 mt-2">Comunidad AuraDerma</h2>
             </div>
             {articles.length > 2 && (
               <button
@@ -996,7 +996,7 @@ function Footer({ logoUrl }: { logoUrl: string | null }) {
         </div>
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-500">© 2025 AuraDerm Skincare. Todos los derechos reservados.</p>
+          <p className="text-xs text-gray-500">© 2025 AuraDerma Skincare. Todos los derechos reservados.</p>
           <div className="flex gap-6 text-xs text-gray-500">
             <a href="#" className="hover:text-white">Políticas de Privacidad</a>
             <a href="#" className="hover:text-white">Términos y Condiciones</a>
@@ -1106,7 +1106,7 @@ function SuggestionHeader({ onOpen }: { onOpen: () => void }) {
     <div className="bg-gray-50 border-y border-gray-100 py-12">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">¿No encuentras tu producto favorito?</h3>
-        <p className="text-gray-500 mb-6">Cuéntanos qué marca o producto te gustaría ver en AuraDerm. ¡Nosotras lo buscamos por ti!</p>
+        <p className="text-gray-500 mb-6">Cuéntanos qué marca o producto te gustaría ver en AuraDerma. ¡Nosotras lo buscamos por ti!</p>
         <button
           onClick={onOpen}
           className="bg-gray-900 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-800 transition hover:scale-105 shadow-lg flex items-center gap-2 mx-auto"
@@ -1281,7 +1281,7 @@ interface Message {
 function Chatbot({ products, cartItems }: { products: Product[]; cartItems: CartItem[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "model", text: "¡Hola! 🌸 Soy tu asesora de AuraDerm. ¿En qué puedo ayudarte hoy?" }
+    { role: "model", text: "¡Hola! 🌸 Soy tu asesora de AuraDerma. ¿En qué puedo ayudarte hoy?" }
   ]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -1306,7 +1306,7 @@ function Chatbot({ products, cartItems }: { products: Product[]; cartItems: Cart
       : 'CARRITO VACÍO';
 
     return `
-Eres la asistente virtual de AuraDerm. Tono amigable, natural y conversacional.
+Eres la asistente virtual de AuraDerma. Tono amigable, natural y conversacional.
 
 REGLAS CRÍTICAS:
 - Respuestas MUY CORTAS (máximo 2-3 líneas).
@@ -1449,7 +1449,7 @@ Ejemplos INCORRECTOS (muy largos):
             <i className="fas fa-robot"></i>
           </div>
           <div>
-            <h3 className="font-bold text-white text-sm">AuraDerm AI</h3>
+            <h3 className="font-bold text-white text-sm">AuraDerma AI</h3>
             <p className="text-pink-100 text-xs">Experta en piel ✨</p>
           </div>
         </div>
