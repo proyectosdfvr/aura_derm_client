@@ -1534,7 +1534,7 @@ function App() {
           model: 'gemini-2.5-flash-image',
           contents: {
             parts: [
-              { text: "Minimalist, elegant vector logo for a skincare brand called 'AuraDerm'. The design should feature a delicate rose or lotus flower in soft pink (#FF6B9D) and white colors. High quality, professional logo design on a white background." }
+              { text: "Minimalist, elegant vector logo for a skincare brand called 'AuraDerma'. The design should feature a delicate rose or lotus flower in soft pink (#FF6B9D) and white colors. High quality, professional logo design on a white background." }
             ]
           },
           config: {

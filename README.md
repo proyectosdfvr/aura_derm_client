@@ -1,6 +1,6 @@
-# AuraDerm - Cliente Web
+# AuraDerma - Cliente Web
 
-Sitio web de e-commerce para AuraDerm, marca especializada en productos dermatológicos de alta calidad.
+Sitio web de e-commerce para AuraDerma, marca especializada en productos dermatológicos de alta calidad.
 
 ## 🌸 Características
 
@@ -124,7 +124,7 @@ Este es un proyecto privado. Para contribuciones, contactar al equipo de desarro
 
 ## 📄 Licencia
 
-Propietario - Todos los derechos reservados © 2025 AuraDerm
+Propietario - Todos los derechos reservados © 2025 AuraDerma
 
 ## 📞 Soporte
 
@@ -134,4 +134,4 @@ Para soporte técnico o consultas:
 
 ---
 
-Desarrollado con ❤️ para AuraDerm
+Desarrollado con ❤️ para AuraDerma
