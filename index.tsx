@@ -121,7 +121,7 @@ function Header({ cartCount, onOpenCart, logoUrl }: { cartCount: number, onOpenC
               </div>
             )}
             <span className="text-2xl font-bold text-gray-800 font-serif tracking-tight">
-              Aura<span className="text-[#FF6B9D]">Derm</span>
+              Aura<span className="text-[#FF6B9D]">Derma</span>
             </span>
           </div>
 
@@ -924,7 +924,7 @@ function Footer({ logoUrl }: { logoUrl: string | null }) {
               {logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-10 h-10 rounded-full" />
               ) : <i className="fas fa-leaf text-2xl text-[#FF6B9D]"></i>}
-              <span className="text-2xl font-bold text-white font-serif">Aura<span className="text-[#FF6B9D]">Derm</span></span>
+              <span className="text-2xl font-bold text-white font-serif">Aura<span className="text-[#FF6B9D]">Derma</span></span>
             </div>
             <p className="text-sm leading-relaxed mb-6 text-gray-400">
               Dedicados a resaltar tu belleza natural con productos dermatológicos de alta calidad. Tu piel merece lo mejor.
