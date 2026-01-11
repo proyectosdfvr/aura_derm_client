@@ -84,7 +84,7 @@ const generateWhatsAppLink = (items: CartItem[], total: number, customerData?: {
 };
 
 // --- Gemini AI Setup ---
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
 
 const createOrderTool: FunctionDeclaration = {
   name: "createOrder",
