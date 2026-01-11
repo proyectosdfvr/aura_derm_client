@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 
 // --- Configuration & Data ---
 
@@ -1247,6 +1247,17 @@ function CheckoutModal({ isOpen, onClose, total, onSubmit }: { isOpen: boolean, 
               Nota: El costo de envío ($10.000 - $50.000) se suma al total y depende de tu ciudad.
             </p>
           </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Teléfono de Contacto</label>
+            <input
+              required
+              type="tel"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B9D] transition"
+              value={formData.phone}
+              onChange={e => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="Ej: 3001234567"
+            />
+          </div>
 
           <div className="pt-4">
             <button
@@ -1692,12 +1703,42 @@ function App() {
 
   const cartTotal = useMemo(() => cart.reduce((acc, item) => acc + (item.precio * item.quantity), 0), [cart]);
 
-  const handleCheckoutSubmit = (customerData: any) => {
-    const link = generateWhatsAppLink(cart, cartTotal, customerData);
-    window.open(link, '_blank');
-    setCart([]);
-    setIsCheckoutOpen(false);
-    setIsCartOpen(false);
+  const handleCheckoutSubmit = async (customerData: any) => {
+    try {
+      // 1. Preparar datos del pedido para Firebase
+      const pedidoData = {
+        nombre: customerData.name,
+        ciudad: customerData.city,
+        direccion: customerData.address,
+        telefono: customerData.phone || '',
+        email: '',
+        productos: cart.map(item => ({
+          productoId: item.id,
+          cantidad: item.quantity,
+          precioUnitario: item.precio
+        })),
+        total: cartTotal,
+        estado: 'nuevo',
+        fechaCreacion: serverTimestamp()
+      };
+
+      // 2. Guardar pedido en Firebase
+      const docRef = await addDoc(collection(db, 'pedidos'), pedidoData);
+      console.log('✅ Pedido guardado en Firebase con ID:', docRef.id);
+
+      // 3. Generar y abrir enlace de WhatsApp
+      const link = generateWhatsAppLink(cart, cartTotal, customerData);
+      window.open(link, '_blank');
+
+      // 4. Limpiar carrito y cerrar modales
+      setCart([]);
+      setIsCheckoutOpen(false);
+      setIsCartOpen(false);
+
+    } catch (error) {
+      console.error('❌ Error al guardar pedido:', error);
+      alert('Hubo un error al procesar tu pedido. Por favor intenta nuevamente o contacta por WhatsApp directamente.');
+    }
   };
 
   return (
