@@ -105,6 +105,49 @@ const createOrderTool: FunctionDeclaration = {
   }
 };
 
+const addToCartTool: FunctionDeclaration = {
+  name: "addToCart",
+  parameters: {
+    type: Type.OBJECT,
+    description: "Agregar un producto al carrito del cliente.",
+    properties: {
+      productName: {
+        type: Type.STRING,
+        description: "Nombre del producto a agregar (debe coincidir exactamente con el catálogo)."
+      },
+      quantity: {
+        type: Type.NUMBER,
+        description: "Cantidad de unidades a agregar (default: 1)."
+      }
+    },
+    required: ["productName"]
+  }
+};
+
+const removeFromCartTool: FunctionDeclaration = {
+  name: "removeFromCart",
+  parameters: {
+    type: Type.OBJECT,
+    description: "Remover un producto del carrito del cliente.",
+    properties: {
+      productName: {
+        type: Type.STRING,
+        description: "Nombre del producto a remover del carrito."
+      }
+    },
+    required: ["productName"]
+  }
+};
+
+const viewCartTool: FunctionDeclaration = {
+  name: "viewCart",
+  parameters: {
+    type: Type.OBJECT,
+    description: "Ver el contenido actual del carrito.",
+    properties: {}
+  }
+};
+
 // --- Components ---
 
 function Header({ cartCount, onOpenCart, logoUrl }: { cartCount: number, onOpenCart: () => void, logoUrl: string | null }) {
@@ -527,7 +570,6 @@ function ProductGrid({ products, addToCart, loading, onProductClick }: { product
                       <span className="text-2xl font-bold bg-gradient-to-r from-[#FF6B9D] to-[#C74375] bg-clip-text text-transparent">
                         {formatPrice(product.precio)}
                       </span>
-                      <span className="text-[10px] text-gray-400 font-medium">Envío gratis +$50.000</span>
                     </div>
                     <button
                       onClick={() => addToCart(product)}
@@ -1289,7 +1331,17 @@ interface Message {
   link?: string;
 }
 
-function Chatbot({ products, cartItems }: { products: Product[]; cartItems: CartItem[] }) {
+function Chatbot({
+  products,
+  cartItems,
+  addToCart,
+  removeFromCart
+}: {
+  products: Product[];
+  cartItems: CartItem[];
+  addToCart: (product: Product) => void;
+  removeFromCart: (id: string) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "model", text: "¡Hola! 🌸 Soy tu asesora de AuraDerma. ¿En qué puedo ayudarte hoy?" }
@@ -1328,10 +1380,23 @@ REGLAS CRÍTICAS:
 
 ${cartStatus}
 
+GESTIÓN DEL CARRITO:
+- Puedes agregar productos usando addToCart con el nombre exacto del producto
+- Puedes remover productos usando removeFromCart
+- Puedes consultar el carrito usando viewCart
+- Para agregar, el nombre del producto DEBE coincidir exactamente con el catálogo
+
+FLUJO DE VENTA:
+1. Cliente pregunta por productos → Recomienda según necesidades
+2. Cliente quiere agregar → Usa addToCart con nombre exacto y cantidad
+3. Cliente quiere ver carrito → Usa viewCart
+4. Cliente quiere remover → Usa removeFromCart
+5. Cliente quiere finalizar → Sigue el PROCESO DE PEDIDO
+
 PROCESO DE PEDIDO:
 1. Si el usuario quiere hacer un pedido:
    - PRIMERO verifica si el carrito tiene productos
-   - Si el carrito está VACÍO, di: "Tu carrito está vacío. Primero agrega productos desde la tienda 🛍️"
+   - Si el carrito está VACÍO, di: "Tu carrito está vacío. Primero agrega productos 🛍️"
    - Si el carrito TIENE productos, pregunta: "Veo que tienes ${cartItems.length} producto(s) en tu carrito. Quieres hacer el pedido de esos productos?"
    - Si confirma, pide SOLO nombre
    - Luego pide SOLO ciudad
@@ -1346,6 +1411,8 @@ Ejemplos de respuestas CORRECTAS:
 - "Claro! Para enviarte el pedido, necesito tu nombre completo 🌸"
 - "Perfecto! Y en qué ciudad estás?"
 - "Listo! Preparando tu pedido ✨"
+- "Agregué 2x [producto] al carrito 🛍️"
+- "Removí [producto] del carrito ✅"
 
 Ejemplos INCORRECTOS (muy largos):
 - NO hagas listas largas de productos
@@ -1368,7 +1435,7 @@ Ejemplos INCORRECTOS (muy largos):
           model: "gemini-3-flash-preview",
           config: {
             systemInstruction: getSystemInstruction(),
-            tools: [{ functionDeclarations: [createOrderTool] }],
+            tools: [{ functionDeclarations: [addToCartTool, removeFromCartTool, viewCartTool, createOrderTool] }],
           },
         });
       }
@@ -1382,6 +1449,97 @@ Ejemplos INCORRECTOS (muy largos):
         const functionResponses = [];
 
         for (const call of functionCalls) {
+          if (call.name === "addToCart") {
+            const args = call.args as any;
+            const productName = args.productName;
+            const quantity = args.quantity || 1;
+
+            // Buscar producto por nombre (case insensitive)
+            const product = products.find(p =>
+              p.nombre.toLowerCase() === productName.toLowerCase()
+            );
+
+            if (!product) {
+              setMessages(prev => [...prev, {
+                role: "model",
+                text: `No encontré el producto "${productName}". ¿Podrías verificar el nombre? 🤔`
+              }]);
+              setIsLoading(false);
+              return;
+            }
+
+            if (product.stock === 0) {
+              setMessages(prev => [...prev, {
+                role: "model",
+                text: `Lo siento, "${product.nombre}" está agotado actualmente 😔`
+              }]);
+              setIsLoading(false);
+              return;
+            }
+
+            // Agregar al carrito
+            for (let i = 0; i < quantity; i++) {
+              addToCart(product);
+            }
+
+            setMessages(prev => [...prev, {
+              role: "model",
+              text: `¡Perfecto! Agregué ${quantity}x ${product.nombre} al carrito 🛍️✨`
+            }]);
+            setIsLoading(false);
+            return;
+          }
+
+          if (call.name === "removeFromCart") {
+            const args = call.args as any;
+            const productName = args.productName;
+
+            // Buscar en el carrito
+            const cartItem = cartItems.find(item =>
+              item.nombre.toLowerCase() === productName.toLowerCase()
+            );
+
+            if (!cartItem) {
+              setMessages(prev => [...prev, {
+                role: "model",
+                text: `"${productName}" no está en tu carrito 🤷‍♀️`
+              }]);
+              setIsLoading(false);
+              return;
+            }
+
+            // Remover del carrito
+            removeFromCart(cartItem.id);
+
+            setMessages(prev => [...prev, {
+              role: "model",
+              text: `Removí "${cartItem.nombre}" del carrito ✅`
+            }]);
+            setIsLoading(false);
+            return;
+          }
+
+          if (call.name === "viewCart") {
+            if (cartItems.length === 0) {
+              setMessages(prev => [...prev, {
+                role: "model",
+                text: "Tu carrito está vacío 🛒"
+              }]);
+            } else {
+              const total = cartItems.reduce((sum, item) => sum + (item.precio * item.quantity), 0);
+              const itemsList = cartItems.map(item =>
+                `${item.quantity}x ${item.nombre} - ${formatPrice(item.precio * item.quantity)}`
+              ).join('\n');
+
+              setMessages(prev => [...prev, {
+                role: "model",
+                text: `Tu carrito:\n${itemsList}\n\nTotal: ${formatPrice(total)} 💰`
+              }]);
+            }
+            setIsLoading(false);
+            return;
+          }
+
           if (call.name === "createOrder") {
             const args = call.args as any;
 
@@ -1794,7 +1952,12 @@ function App() {
         addToCart={addToCart}
       />
 
-      <Chatbot products={products} cartItems={cart} />
+      <Chatbot
+        products={products}
+        cartItems={cart}
+        addToCart={addToCart}
+        removeFromCart={removeItem}
+      />
 
       <SuggestionModal isOpen={isSuggestionOpen} onClose={() => setIsSuggestionOpen(false)} />
 
